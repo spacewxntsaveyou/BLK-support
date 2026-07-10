@@ -1,0 +1,25 @@
+{
+  "name": "blk-support",
+  "displayName": "Dagor BLK Syntax",
+  "description": "TextMate grammar for .blk (Dagor Engine config files)",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": { "vscode": "^1.60.0" },
+  "contributes": {
+    "languages": [
+      {
+        "id": "blk",
+        "extensions": [".blk"],
+        "aliases": ["BLK", "blk"],
+        "configuration": "./language-config.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "blk",
+        "scopeName": "source.blk",
+        "path": "./syntaxes/blk.tmLanguage.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Dagor BLK",
+  "scopeName": "source.blk",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#include_statement" },
+    { "include": "#directive" },
+    { "include": "#block" },
+    { "include": "#parameter" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.blk",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.blk",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+
+    "include_statement": {
+      "name": "meta.include.blk",
+      "begin": "\\b(include)\\b",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.import.blk" }
+      },
+      "end": "(?=\\n|$)",
+      "patterns": [
+        {
+          "name": "string.unquoted.include-path.blk",
+          "match": "\\S+"
+        }
+      ]
+    },
+
+    "directive": {
+      "patterns": [
+        {
+          "name": "meta.directive.block.blk",
+          "begin": "@(override|delete|clone-last)\\s*:?\\s*([a-zA-Z_][a-zA-Z0-9_]*)",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.directive.blk" },
+            "2": { "name": "entity.name.tag.directive.blk" }
+          },
+          "end": "(?=[;\\n]|$)",
+          "patterns": [
+            { "include": "#block" }
+          ]
+        },
+        {
+          "name": "meta.directive.simple.blk",
+          "match": "@(override|delete|clone-last)\\s*:?\\s*([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.directive.blk" },
+            "2": { "name": "entity.name.tag.directive.blk" }
+          }
+        }
+      ]
+    },
+
+    "block": {
+      "name": "meta.block.blk",
+      "begin": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(\\{)",
+      "beginCaptures": {
+        "1": { "name": "entity.name.type.block.blk" },
+        "2": { "name": "punctuation.definition.block.begin.blk" }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.block.end.blk" }
+      },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#include_statement" },
+        { "include": "#directive" },
+        { "include": "#block" },
+        { "include": "#parameter" }
+      ]
+    },
+
+    "parameter": {
+      "patterns": [
+        {
+          "name": "meta.parameter.array.blk",
+          "begin": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:)\\s*((?:t|b|r|i|p[234]|ip[23]|c|m))\\s*(\\[\\])\\s*(=)",
+          "beginCaptures": {
+            "1": { "name": "variable.other.member.blk" },
+            "2": { "name": "keyword.operator.colon.blk" },
+            "3": { "name": "storage.type.blk" },
+            "4": { "name": "punctuation.definition.array.begin.blk" },
+            "5": { "name": "keyword.operator.assignment.blk" }
+          },
+          "end": "(?=[;\\n]|$)",
+          "patterns": [
+            { "include": "#array_value" }
+          ]
+        },
+        {
+          "name": "meta.parameter.simple.blk",
+          "begin": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:)\\s*((?:t|b|r|i|p[234]|ip[23]|c|m))\\s*(=)",
+          "beginCaptures": {
+            "1": { "name": "variable.other.member.blk" },
+            "2": { "name": "keyword.operator.colon.blk" },
+            "3": { "name": "storage.type.blk" },
+            "4": { "name": "keyword.operator.assignment.blk" }
+          },
+          "end": "(?=[;\\n]|$)",
+          "patterns": [
+            { "include": "#value" }
+          ]
+        }
+      ]
+    },
+
+    "array_value": {
+      "name": "meta.array.blk",
+      "begin": "\\[",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.array.begin.blk" }
+      },
+      "end": "\\]",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.array.end.blk" }
+      },
+      "patterns": [
+        { "include": "#value" }
+      ]
+    },
+
+    "value": {
+      "patterns": [
+        { "include": "#string" },
+        { "include": "#boolean" },
+        { "include": "#matrix" },
+        { "include": "#number_sequence" },
+        { "include": "#number" }
+      ]
+    },
+
+    "string": {
+      "name": "string.quoted.double.blk",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.blk",
+          "match": "~[nrt]|~~"
+        }
+      ]
+    },
+
+    "boolean": {
+      "name": "constant.language.boolean.blk",
+      "match": "\\b(yes|no|true|false|on|off)\\b"
+    },
+
+    "matrix": {
+      "name": "constant.numeric.matrix.blk",
+      "begin": "\\[\\[",
+      "end": "\\]\\]",
+      "patterns": [
+        {
+          "name": "constant.numeric.matrix.row.blk",
+          "match": "\\[[^\\]]*\\]"
+        }
+      ]
+    },
+
+    "number_sequence": {
+      "name": "constant.numeric.sequence.blk",
+      "match": "\\b(?:\\+|-)?\\d+\\.?\\d*(?:\\s*,\\s*(?:\\+|-)?\\d+\\.?\\d*)+"
+    },
+
+    "number": {
+      "name": "constant.numeric.blk",
+      "match": "\\b(?:\\+|-)?\\d+\\.?\\d*\\b"
+    }
+  }
+}
